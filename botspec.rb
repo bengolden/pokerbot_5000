@@ -10,10 +10,8 @@ class PokerHand
 	let(:d5) {Card.new(5,"d")}
 	let(:h5) {Card.new(5,"h")}
 	let(:c5) {Card.new(5,"c")}
-
 	let(:s6) {Card.new(6,"s")}
 	let(:c9) {Card.new(9,"c")}
-
 	let(:sa) {Card.new(14,"s")}
 	let(:ca) {Card.new(14,"a")}
 
@@ -46,7 +44,7 @@ class PokerHand
 		end
 
 		describe '.flush?' do
-			let(:hand1) {PokerHand.new([s2,s3,s4,s6,sa])}
+			let(:hand1) {PokerHand.new([c9,s2,s3,s4,s6,sa])}
 			let(:hand2) {PokerHand.new([s2,d5,s4,s6,sa])}
 
 			it 'returns true if hand is a flush' do
@@ -59,7 +57,7 @@ class PokerHand
 		end		
 
 		describe '.straight_flush?' do
-			let(:hand1) {PokerHand.new([s2,s3,s4,s6,s5])}
+			let(:hand1) {PokerHand.new([s2,s3,c9,s4,s6,s5])}
 			let(:hand2) {PokerHand.new([s2,s3,s4,s6,sa])}
 			let(:hand3) {PokerHand.new([s4,s6,s2,d5,s3])}
 
