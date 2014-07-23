@@ -133,5 +133,44 @@ class PokerHand
 				expect(hand2.pair?).to equal(false)
 			end
 		end
+
+		describe 'return hand description' do
+			let(:no_pair)					{PokerHand.new([s3,s2,h5,sa,c9])}
+			let(:pair)						{PokerHand.new([s3,s2,h5,sa,ca])}
+			let(:two_pair)				{PokerHand.new([s3,c5,h5,sa,ca])}
+			let(:trips)						{PokerHand.new([s3,c5,h5,sa,d5])}
+			let(:straight)				{PokerHand.new([s4,s6,s2,d5,s3])}
+			let(:flush)						{PokerHand.new([s2,s3,s4,s6,sa])}
+			let(:full_house) 			{PokerHand.new([s5,c5,h5,sa,ca])}
+			let(:quads) 					{PokerHand.new([s5,c5,h5,sa,d5])}
+			let(:straight_flush) 	{PokerHand.new([s2,s3,s4,s6,s5])}
+			it 'evaluates no pair' do
+				expect(no_pair.evaluate)to equal([0,14,9,5,3,2])
+			end
+			it 'evaluates pair' do
+				expect(pair.evaluate)to equal([1,14,5,3,2])
+			end
+			it 'evaluates two pair' do
+				expect(two_pair.evaluate)to equal([2,14,5,3])
+			end
+			it 'evaluates trips' do
+				expect(trips.evaluate)to equal([3,5,14,3])
+			end
+			it 'evaluates straight' do 
+				expect(straight.evaluate)to equal([4,6])
+			end
+			it 'evaluates flush' do
+				expect(flush.evaluate)to equal([5,14,6,4,3,2])
+			end
+			it 'evaluates full house' do
+				expect(flush.evaluate)to equal([6,5,14])
+			end
+			it 'evaluates quads' do
+				expect(flush.evaluate)to equal([7,5,14])
+			end
+			it 'evaluates straight flush' do
+				expect(flush.evaluate)to equal([8,6])
+			end
+		end
 	end
 end
