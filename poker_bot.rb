@@ -26,6 +26,16 @@ class PokerHand
 		end
 	end
 
+	def compare(other_hand)
+		hand_strength = evaluate
+		other_hand_strength = other_hand.evaluate
+		hand_strength.length.times do |index|
+			return 1 if hand_strength[index] > other_hand_strength[index]
+			return -1 if hand_strength[index] < other_hand_strength[index]
+		end
+		0
+	end
+
 	def straight?
 		return false if values_present(@hand).length < 5
 		values_present(@hand).each_cons(5).any? do |five_card_hand|

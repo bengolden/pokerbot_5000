@@ -136,7 +136,8 @@ class PokerHand
 
 		describe 'return hand description' do
 			let(:no_pair)					{PokerHand.new([s3,s2,h5,sa,c9])}
-			let(:pair)						{PokerHand.new([s3,s2,h5,sa,ca])}
+			let(:pair)						{PokerHand.new([s3,s2,h5,s5,ca])}
+			let(:better_pair)			{PokerHand.new([s3,s2,h5,sa,ca])}
 			let(:two_pair)				{PokerHand.new([s3,c5,h5,sa,ca])}
 			let(:trips)						{PokerHand.new([s3,c5,h5,sa,d5])}
 			let(:straight)				{PokerHand.new([s4,s6,s2,d5,s3])}
@@ -148,7 +149,7 @@ class PokerHand
 				expect(no_pair.evaluate).to eq([0,14,9,5,3,2])
 			end
 			it 'evaluates pair' do
-				expect(pair.evaluate).to eq([1,14,5,3,2])
+				expect(pair.evaluate).to eq([1,5,14,3,2])
 			end
 			it 'evaluates two pair' do
 				expect(two_pair.evaluate).to eq([2,14,5,3])
@@ -171,6 +172,16 @@ class PokerHand
 			it 'evaluates straight flush' do
 				expect(straight_flush.evaluate).to eq([8,6])
 			end
+			it 'correctly compares hands of different types' do
+				expect(straight.compare(two_pair)).to eq(1)
+			end
+			it 'correctly compares hands of the same type' do
+				expect(pair.compare(better_pair)).to eq(-1)
+			end
+			it 'correctly compares hands that are identical' do
+				expect(two_pair.compare(two_pair)).to eq(0)
+			end
+
 		end
 	end
 end
