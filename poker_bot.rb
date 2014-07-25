@@ -1,147 +1,77 @@
-class PokerHand
-	def initialize(hand)
-		@hand = hand.sort_by{|card|card.num}
-		@straight_top
-	end
+require_relative "poker_bot_hands"
 
-	def evaluate
-		if straight_flush?
-			[8, @straight_top]
-		elsif straight?
-			[4, @straight_top]
-		elsif quads?
-			[7] + quads_kickers
-		elsif full_house?
-			[6] + house_kickers
-		elsif flush?
-			[5] + natural_kickers
-		elsif trips?
-			[3] + trips_kickers
-		elsif two_pair?
-			[2] + two_pair_kickers
-		elsif pair?
-			[1] + pair_kickers
-		else
-			[0] + natural_kickers
+SUITS = ['s','h','d','c']
+VALUES = [2,3,4,5,6,7,8,9,10,11,12,13,14]
+
+class PokerGame
+	attr_reader :players, :deck, :board
+	def initialize
+		@players = []
+		@board = []
+		6.times do
+			@players << PokerPlayer.new
 		end
-	end
-
-	def compare(other_hand)
-		hand_strength = evaluate
-		other_hand_strength = other_hand.evaluate
-		hand_strength.length.times do |index|
-			return 1 if hand_strength[index] > other_hand_strength[index]
-			return -1 if hand_strength[index] < other_hand_strength[index]
-		end
-		0
-	end
-
-	def straight?
-		return false if values_present(@hand).length < 5
-		values_present(@hand).each_cons(5).any? do |five_card_hand|
-			if 
-				(1..4).all? do |index|
-					five_card_hand[index] - five_card_hand[0] == index
-				end
-				@straight_top = five_card_hand[4]
-				return true
-			else
-				false
+		@deck = []
+		SUITS.each do |suit|
+			VALUES.each do |value|
+				@deck << Card.new(value,suit)
 			end
 		end
 	end
 
-	def flush?
-		suit_counts[0] >= 5
+	def deal_preflop
+		2.times {deal_to_players}
 	end
 
-	def straight_flush?
-		straight? && flush?
+	def deal_flop
+		3.times {deal_community}
 	end
 
-	def full_house?
-		value_counts[0] == 3 && value_counts[1] == 2
+	def deal_turn
+		deal_community
 	end
 
-	def two_pair?
-		value_counts[0] == 2 && value_counts[1] == 2
+	def deal_river
+		deal_community
 	end
 
-	def quads?
-		value_counts[0] == 4
-	end
+	def winner
+		winner = [players[0]]
+		players[1..5].each do |player|
+			player_hand = player.hand
+			winner_hand = winner[0].hand
 
-	def trips?
-		value_counts[0] == 3
-	end
 
-	def pair?
-		value_counts[0] == 2
+			if player_hand.compare(winner_hand) == 1
+				winner = [player]
+			elsif player_hand.compare(winner_hand) == 0
+				winner << player
+			end
+		end
+		winner
 	end
+	private
 
-	def value_counts
-		value_counts_and_values.values.map{|cards|cards.count}.sort.reverse
+	def deal_community
+		@board << @deck.pop
 	end
-
-	def value_counts_and_values
-		@hand.group_by{|card| card.num}
-	end
-
-	def repeated_values(times)
-		value_counts_and_values.select{|k,v| v.length == times}
-	end
-
-	def values_present(hand)
-		output = hand.map{|card|card.num}.uniq
-		output = [1] + output if output.last == 14
-		output
-	end
-
-	def suit_counts
-		@hand.group_by{|card| card.suit}.values.map{|cards|cards.count}.sort.reverse
-	end
-
-	def kickers
-		values_present(@hand).sort.reverse[0..4]
-	end
-
-	def natural_kickers
-		kickers
-	end
-
-	def repeat_kickers(repetition,length)
-		repetition = repeated_values(repetition).keys.sort.reverse
-		(repetition + (kickers - repetition))[0..length-1]
-	end
-
-	def pair_kickers
-		repeat_kickers(2,4)
-	end
-
-	def two_pair_kickers
-		repeat_kickers(2,3)
-	end
-
-	def trips_kickers
-		repeat_kickers(3,3)
-	end
-
-	def quads_kickers
-		repeat_kickers(4,2)
-	end
-
-	def house_kickers
-		triple = repeated_values(3).keys
-		pair = repeated_values(2).keys
-		triple + pair
+	def deal_to_players
+		@players.each do |player|
+			player.receive_cards(@deck.pop)
+		end
 	end
 
 end
 
-class Card
-	attr_reader :num, :suit
-	def initialize(num,suit)
-		@num = num
-		@suit = suit
+class PokerPlayer
+	attr_reader :hand
+	def initialize(name = "Anon")
+		@name = name
+		@hand = PokerHand.new([])
 	end
+
+	def receive_cards(cards)
+		@hand.hand << cards
+	end
+
 end
