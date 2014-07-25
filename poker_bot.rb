@@ -40,8 +40,6 @@ class PokerGame
 		players[1..5].each do |player|
 			player_hand = player.hand
 			winner_hand = winner[0].hand
-
-
 			if player_hand.compare(winner_hand) == 1
 				winner = [player]
 			elsif player_hand.compare(winner_hand) == 0

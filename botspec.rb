@@ -110,15 +110,42 @@ class PokerGame
      	player4.stub(:hand) {hand4}
      	player5.stub(:hand) {hand5}
      	player6.stub(:hand) {hand6}
-     	hand1.stub(:hand) {[s2,s3,sj,sk,sq]}
-     	hand2.stub(:hand) {[s4,s5,sj,sk,sq]}
-     	hand3.stub(:hand) {[d5,h5,sj,sk,sq]}
+     	player1.stub(:id) {1}
+     	player2.stub(:id) {2}
+     	player3.stub(:id) {3}
+     	player4.stub(:id) {4}
+     	player5.stub(:id) {5}
+     	player6.stub(:id) {6}
+     	hand1.stub(:hand) {[d5,h5,sj,sk,sq]}
+     	hand2.stub(:hand) {[s2,s3,sj,sk,sq]}
+     	hand3.stub(:hand) {[s4,s5,sj,sk,sq]}
      	hand4.stub(:hand) {[c5,s6,sj,sk,sq]}
      	hand5.stub(:hand) {[sa,ca,sj,sk,sq]}
      	hand6.stub(:hand) {[c9,ct,sj,sk,sq]}
-			expect(game.winner).to eq([player2])
+     	# p game.winner[0].id
+     	# p game.winner[1].id
+     	# p game.winner.length
+
+			expect(game.winner).to eq([player3])
     end
 
+    it "returns multiple winners" do
+      game.stub(:players) { [player1,player2,player3,player4,player5,player6] }
+     	player1.stub(:hand) {hand1}
+     	player2.stub(:hand) {hand2}
+     	player3.stub(:hand) {hand3}
+     	player4.stub(:hand) {hand4}
+     	player5.stub(:hand) {hand5}
+     	player6.stub(:hand) {hand6}
+     	hand1.stub(:hand) {[s2,s3,sj,sk,sq,sa,s5]}
+     	hand2.stub(:hand) {[s4,c9,sj,sk,sq,sa,s5]}
+     	hand3.stub(:hand) {[d5,h5,sj,sk,sq,sa,s5]}
+     	hand4.stub(:hand) {[c5,s4,sj,sk,sq,sa,s5]}
+     	hand5.stub(:hand) {[s2,ca,sj,sk,sq,sa,s5]}
+     	hand6.stub(:hand) {[c9,ct,sj,sk,sq,sa,s5]}
+     	p game.winner[0].hand.hand
+			expect(game.winner.length).to eq(6)
+    end
 
 
 

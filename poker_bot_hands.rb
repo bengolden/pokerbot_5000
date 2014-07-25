@@ -24,7 +24,7 @@ class PokerHand
 		elsif full_house?
 			[6] + house_kickers
 		elsif flush?
-			[5] + natural_kickers
+			[5] + flush_kickers
 		elsif trips?
 			[3] + trips_kickers
 		elsif two_pair?
@@ -112,12 +112,21 @@ class PokerHand
 		hand.group_by{|card| card.suit}.values.map{|cards|cards.count}.sort.reverse
 	end
 
+	def flush_suit
+		hand.group_by{|card| card.suit}.keys.sort.reverse[0]
+	end
+
 	def kickers
 		values_present(hand).sort.reverse[0..4]
 	end
 
 	def natural_kickers
 		kickers
+	end
+
+	def flush_kickers
+		cards_of_flush_suit = hand.select{|card| card.suit == flush_suit}
+		values_present(cards_of_flush_suit).sort.reverse[0..4]
 	end
 
 	def repeat_kickers(repetition,length)
