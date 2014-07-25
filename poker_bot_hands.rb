@@ -46,6 +46,27 @@ class PokerHand
 		0
 	end
 
+	def compare_to_range(dead_cards)
+		range = (PokerDeck.deal - dead_cards - @hand).combination(2).map{|cards| PokerHand.new(cards)}
+		p range.length
+		p @hand
+		wins = 0
+		losses = 0
+		ties = 0
+		range.each do |hand|
+			if compare(hand) == 1
+				wins += 1
+			elsif compare(hand) == -1
+				losses += 1
+			else
+				ties += 1
+			end
+		end
+
+
+		{wins: wins, losses: losses, ties: ties}
+	end
+
 	def straight?
 		return false if values_present(hand).length < 5
 		hand.sort_by!{|card|card.num}
@@ -163,5 +184,18 @@ class Card
 	def initialize(num,suit)
 		@num = num
 		@suit = suit
+	end
+end
+
+SUITS = ['s','h','d','c']
+VALUES = [2,3,4,5,6,7,8,9,10,11,12,13,14]
+
+class PokerDeck
+	def self.deal
+		SUITS.each_with_object([]) do |suit, object|
+			VALUES.each do |value|
+				object << Card.new(value,suit)
+			end
+		end.shuffle	
 	end
 end

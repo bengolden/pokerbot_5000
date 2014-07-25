@@ -122,10 +122,6 @@ class PokerGame
      	hand4.stub(:hand) {[c5,s6,sj,sk,sq]}
      	hand5.stub(:hand) {[sa,ca,sj,sk,sq]}
      	hand6.stub(:hand) {[c9,ct,sj,sk,sq]}
-     	# p game.winner[0].id
-     	# p game.winner[1].id
-     	# p game.winner.length
-
 			expect(game.winner).to eq([player3])
     end
 
@@ -143,12 +139,9 @@ class PokerGame
      	hand4.stub(:hand) {[c5,s4,sj,sk,sq,sa,s5]}
      	hand5.stub(:hand) {[s2,ca,sj,sk,sq,sa,s5]}
      	hand6.stub(:hand) {[c9,ct,sj,sk,sq,sa,s5]}
-     	p game.winner[0].hand.hand
 			expect(game.winner.length).to eq(6)
     end
+  end
 
-
-
-	end
 
 end

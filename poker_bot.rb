@@ -1,8 +1,5 @@
 require_relative "poker_bot_hands"
 
-SUITS = ['s','h','d','c']
-VALUES = [2,3,4,5,6,7,8,9,10,11,12,13,14]
-
 class PokerGame
 	attr_reader :players, :deck, :board
 	def initialize(players=[])
@@ -11,13 +8,7 @@ class PokerGame
 		6.times do
 			@players << PokerPlayer.new
 		end
-		@deck = []
-		SUITS.each do |suit|
-			VALUES.each do |value|
-				@deck << Card.new(value,suit)
-			end
-		end
-		@deck.shuffle!
+		@deck = new_deck
 	end
 
 	def deal_preflop
@@ -49,17 +40,23 @@ class PokerGame
 		end
 		winner
 	end
+
+
 	private
+
+	def new_deck
+		PokerDeck.deal
+	end
 
 	def deal_community
 		@board << @deck.pop
 	end
+
 	def deal_to_players
 		@players.each do |player|
 			player.receive_cards(@deck.pop)
 		end
 	end
-
 end
 
 class PokerPlayer
@@ -74,16 +71,16 @@ class PokerPlayer
 	end
 end
 
-john = PokerPlayer.new("John")
-james = PokerPlayer.new("James")
-jill = PokerPlayer.new("Jill")
-jeff = PokerPlayer.new("Jeff")
-jenna = PokerPlayer.new("Jenna")
-joan = PokerPlayer.new("Joan")
+# john = PokerPlayer.new("John")
+# james = PokerPlayer.new("James")
+# jill = PokerPlayer.new("Jill")
+# jeff = PokerPlayer.new("Jeff")
+# jenna = PokerPlayer.new("Jenna")
+# joan = PokerPlayer.new("Joan")
 
-game = PokerGame.new([john,james,jill,jeff,jenna,joan])
-game.deal_preflop
-game.deal_flop
-game.deal_turn
-game.deal_river
-p game.winner
+# game = PokerGame.new([john,james,jill,jeff,jenna,joan])
+# game.deal_preflop
+# game.deal_flop
+# game.deal_turn
+# game.deal_river
+# p game.winner

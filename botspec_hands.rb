@@ -13,7 +13,7 @@ class PokerHand
 	let(:s6) {Card.new(6,"s")}
 	let(:c9) {Card.new(9,"c")}
 	let(:sa) {Card.new(14,"s")}
-	let(:ca) {Card.new(14,"a")}
+	let(:ca) {Card.new(14,"c")}
 
 		describe '.straight?' do
 			let(:hand1) {PokerHand.new([s2,s3,s4,d5,s6,h5])}
@@ -181,7 +181,15 @@ class PokerHand
 			it 'correctly compares hands that are identical' do
 				expect(two_pair.compare(two_pair)).to eq(0)
 			end
-
 		end
+
+		describe 'compare hand to range' do
+			let(:hand1) {PokerHand.new([ca,sa])}
+			it 'correctly ranks aces preflop' do
+				expect(hand1.compare_to_range([])[:losses]).to eq(0)
+				expect(hand1.compare_to_range([])[:ties]).to eq(1)
+			end
+		end
+
 	end
 end
