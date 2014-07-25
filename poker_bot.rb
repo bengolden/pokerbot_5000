@@ -5,8 +5,8 @@ VALUES = [2,3,4,5,6,7,8,9,10,11,12,13,14]
 
 class PokerGame
 	attr_reader :players, :deck, :board
-	def initialize
-		@players = []
+	def initialize(players=[])
+		@players = players
 		@board = []
 		6.times do
 			@players << PokerPlayer.new
@@ -17,6 +17,7 @@ class PokerGame
 				@deck << Card.new(value,suit)
 			end
 		end
+		@deck.shuffle!
 	end
 
 	def deal_preflop
@@ -71,5 +72,18 @@ class PokerPlayer
 	def receive_cards(cards)
 		@hand.hand << cards
 	end
-
 end
+
+john = PokerPlayer.new("John")
+james = PokerPlayer.new("James")
+jill = PokerPlayer.new("Jill")
+jeff = PokerPlayer.new("Jeff")
+jenna = PokerPlayer.new("Jenna")
+joan = PokerPlayer.new("Joan")
+
+game = PokerGame.new([john,james,jill,jeff,jenna,joan])
+game.deal_preflop
+game.deal_flop
+game.deal_turn
+game.deal_river
+p game.winner
