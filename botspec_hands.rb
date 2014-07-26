@@ -185,9 +185,19 @@ class PokerHand
 
 		describe 'compare hand to range' do
 			let(:hand1) {PokerHand.new([ca,sa])}
+			let(:hand2) {PokerHand.new([c5,s5])}
+			let(:hand3) {PokerHand.new([c5,s3])}
 			it 'correctly ranks aces preflop' do
 				expect(hand1.compare_to_range([])[:losses]).to eq(0)
 				expect(hand1.compare_to_range([])[:ties]).to eq(1)
+			end
+			it 'correctly ranks fives preflop' do
+				expect(hand2.compare_to_range([])[:losses]).to eq(54)
+				expect(hand2.compare_to_range([])[:ties]).to eq(1)
+			end
+			it 'correctly ranks ace-five preflop' do
+				expect(hand3.compare_to_range([])[:losses]).to eq(154)
+				expect(hand3.compare_to_range([])[:ties]).to eq(9)
 			end
 		end
 

@@ -40,6 +40,9 @@ class PokerHand
 		hand_strength = evaluate
 		other_hand_strength = other_hand.evaluate
 		hand_strength.length.times do |index|
+			p index
+			p hand_strength
+			p other_hand_strength
 			return 1 if hand_strength[index] > other_hand_strength[index]
 			return -1 if hand_strength[index] < other_hand_strength[index]
 		end
@@ -47,18 +50,25 @@ class PokerHand
 	end
 
 	def compare_to_range(dead_cards)
-		range = (PokerDeck.deal - dead_cards - @hand).combination(2).map{|cards| PokerHand.new(cards)}
+		dead_cards += @hand
+		available_cards = PokerDeck.deal.select{|card| dead_cards.all?{|dead_card| card.num != dead_card.num || card.suit != dead_card.suit}}
+		p available_cards.length
+		range = available_cards.combination(2).map{|cards| PokerHand.new(cards)}
 		p range.length
-		p @hand
 		wins = 0
 		losses = 0
 		ties = 0
 		range.each do |hand|
+			p hand
+			p @hand
 			if compare(hand) == 1
+				p "win"
 				wins += 1
 			elsif compare(hand) == -1
+				p "loss"
 				losses += 1
 			else
+				p "tie"
 				ties += 1
 			end
 		end
