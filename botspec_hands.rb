@@ -60,8 +60,9 @@ class PokerHand
 			let(:hand1) {PokerHand.new([s2,s3,c9,s4,s6,s5])}
 			let(:hand2) {PokerHand.new([s2,s3,s4,s6,sa])}
 			let(:hand3) {PokerHand.new([s4,s6,s2,d5,s3])}
+			let(:hand4) {PokerHand.new([s4,s6,s2,d5,s3,sa])}
 
-			it 'returns true if straight and flush' do
+			it 'returns true if straight flush' do
 				expect(hand1.straight_flush?).to eq(true)
 			end
 
@@ -69,9 +70,13 @@ class PokerHand
 				expect(hand2.straight_flush?).to eq(false)
 			end
 
-			it 'returns false if only straight' do
-				expect(hand3.straight_flush?).to eq(false)
-			end
+			# it 'returns false if only straight' do
+			# 	expect(hand3.straight_flush?).to eq(false)
+			# end
+
+			it 'returns false if straight and flush but not straight flush' do
+				expect(hand4.straight_flush?).to eq(false)
+			end			
 		end
 
 		describe '.full_house?' do
@@ -205,12 +210,9 @@ class PokerHand
 				expect(hand1.compare_to_range([s2,s3,s4])[:ties]).to eq(1)
 			end
 			it 'correctly ranks fives postriver' do
-				# expect(hand1.compare_to_range([s2,s3,s4,s6,c9])[:losses]).to eq(54)
-				# expect(hand1.compare_to_range([s2,s3,s4,s6,c9])[:ties]).to eq(1)
+				expect(hand2.compare_to_range([s2,s3,s4,s6,c9])[:losses]).to eq(0)
+				expect(hand2.compare_to_range([s2,s3,s4,s6,c9])[:ties]).to eq(0)
 			end
-
-
 		end
-
 	end
 end

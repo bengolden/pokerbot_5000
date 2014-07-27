@@ -79,7 +79,6 @@ class PokerHand
 		values_present(hand).each_cons(5).any? do |five_card_hand|
 			if
 				(1..4).all? do |index|
-
 					five_card_hand[index] - five_card_hand[0] == index
 				end
 				@straight_top = five_card_hand[4]
@@ -95,7 +94,16 @@ class PokerHand
 	end
 
 	def straight_flush?
-		straight? && flush?
+		if flush?
+			flush_cards_only = self.dup
+			this_hand = flush_cards_only.hand.dup
+			this_hand.select! {|card| card.suit == flush_suit}
+			flush_cards_only.hand = this_hand
+			output = flush_cards_only.straight?
+			@straight_top = flush_cards_only.straight_top
+			return output
+		end
+		false
 	end
 
 	def full_house?
@@ -131,7 +139,7 @@ class PokerHand
 	end
 
 	def values_present(hand)
-		output = hand.map{|card|card.num}.uniq#.sort.reverse
+		output = hand.map{|card|card.num}.uniq
 		output = [1] + output if output.include?(14)
 		output
 	end
@@ -183,7 +191,6 @@ class PokerHand
 		pair = repeated_values(2).keys
 		triple + pair
 	end
-
 end
 
 class Card
