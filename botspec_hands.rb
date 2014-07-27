@@ -70,9 +70,9 @@ class PokerHand
 				expect(hand2.straight_flush?).to eq(false)
 			end
 
-			# it 'returns false if only straight' do
-			# 	expect(hand3.straight_flush?).to eq(false)
-			# end
+			it 'returns false if only straight' do
+				expect(hand3.straight_flush?).to eq(false)
+			end
 
 			it 'returns false if straight and flush but not straight flush' do
 				expect(hand4.straight_flush?).to eq(false)
@@ -146,6 +146,7 @@ class PokerHand
 			let(:two_pair)				{PokerHand.new([s3,c5,h5,sa,ca])}
 			let(:trips)						{PokerHand.new([s3,c5,h5,sa,d5])}
 			let(:straight)				{PokerHand.new([s4,s6,s2,d5,s3])}
+			let(:long_straight)		{PokerHand.new([s4,s6,s2,d5,s3,ca])}
 			let(:flush)						{PokerHand.new([s2,s3,s4,s6,sa])}
 			let(:full_house) 			{PokerHand.new([s5,c5,h5,sa,ca])}
 			let(:quads) 					{PokerHand.new([s5,c5,h5,sa,d5])}
@@ -164,6 +165,9 @@ class PokerHand
 			end
 			it 'evaluates straight' do 
 				expect(straight.evaluate).to eq([4,6])
+			end
+			it 'evaluates long straight correctly' do 
+				expect(long_straight.evaluate).to eq([4,6])
 			end
 			it 'evaluates flush' do
 				expect(flush.evaluate).to eq([5,14,6,4,3,2])

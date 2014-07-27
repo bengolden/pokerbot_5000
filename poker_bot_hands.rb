@@ -75,13 +75,13 @@ class PokerHand
 
 	def straight?
 		return false if values_present(hand).length < 5
-		hand.sort_by!{|card|card.num}
+		hand.sort_by!{|card|card.num}.reverse!
 		values_present(hand).each_cons(5).any? do |five_card_hand|
 			if
 				(1..4).all? do |index|
-					five_card_hand[index] - five_card_hand[0] == index
+					five_card_hand[0] - five_card_hand[index] == index
 				end
-				@straight_top = five_card_hand[4]
+				@straight_top = five_card_hand[0]
 				return true
 			else
 				false
@@ -140,7 +140,7 @@ class PokerHand
 
 	def values_present(hand)
 		output = hand.map{|card|card.num}.uniq
-		output = [1] + output if output.include?(14)
+		output << 1 if output.include?(14)
 		output
 	end
 
