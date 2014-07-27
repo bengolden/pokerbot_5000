@@ -7,7 +7,11 @@ class PokerHand
 	end
 
 	def add_cards(cards)
-		hand += cards
+		@hand = @hand + cards
+	end
+
+	def remove_cards(cards)
+		@hand = @hand + cards
 	end
 
 	def card_count
@@ -17,14 +21,14 @@ class PokerHand
 	def evaluate
 		if straight_flush?
 			[8, straight_top]
-		elsif straight?
-			[4, straight_top]
 		elsif quads?
 			[7] + quads_kickers
 		elsif full_house?
 			[6] + house_kickers
 		elsif flush?
 			[5] + flush_kickers
+		elsif straight?
+			[4, straight_top]
 		elsif trips?
 			[3] + trips_kickers
 		elsif two_pair?
@@ -40,49 +44,42 @@ class PokerHand
 		hand_strength = evaluate
 		other_hand_strength = other_hand.evaluate
 		hand_strength.length.times do |index|
-			p index
-			p hand_strength
-			p other_hand_strength
 			return 1 if hand_strength[index] > other_hand_strength[index]
 			return -1 if hand_strength[index] < other_hand_strength[index]
 		end
 		0
 	end
 
-	def compare_to_range(dead_cards)
-		dead_cards += @hand
+	def compare_to_range(board)
+		dead_cards = @hand + board
 		available_cards = PokerDeck.deal.select{|card| dead_cards.all?{|dead_card| card.num != dead_card.num || card.suit != dead_card.suit}}
-		p available_cards.length
 		range = available_cards.combination(2).map{|cards| PokerHand.new(cards)}
-		p range.length
 		wins = 0
 		losses = 0
 		ties = 0
-		range.each do |hand|
-			p hand
-			p @hand
-			if compare(hand) == 1
-				p "win"
+		hand_copy = self.dup
+		hand_copy.add_cards(board)
+		range.each do |other_hand|
+			other_hand.add_cards(board)
+			if hand_copy.compare(other_hand) == 1
 				wins += 1
-			elsif compare(hand) == -1
-				p "loss"
+			elsif hand_copy.compare(other_hand) == -1
 				losses += 1
 			else
-				p "tie"
 				ties += 1
 			end
 		end
 
-
-		{wins: wins, losses: losses, ties: ties}
+	 	{wins: wins, losses: losses, ties: ties}
 	end
 
 	def straight?
 		return false if values_present(hand).length < 5
 		hand.sort_by!{|card|card.num}
 		values_present(hand).each_cons(5).any? do |five_card_hand|
-			if 
+			if
 				(1..4).all? do |index|
+
 					five_card_hand[index] - five_card_hand[0] == index
 				end
 				@straight_top = five_card_hand[4]
@@ -134,8 +131,8 @@ class PokerHand
 	end
 
 	def values_present(hand)
-		output = hand.map{|card|card.num}.uniq
-		output = [1] + output if output.last == 14
+		output = hand.map{|card|card.num}.uniq#.sort.reverse
+		output = [1] + output if output.include?(14)
 		output
 	end
 
