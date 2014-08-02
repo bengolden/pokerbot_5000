@@ -69,7 +69,6 @@ class PokerHand
 				ties += 1
 			end
 		end
-
 	 	{wins: wins, losses: losses, ties: ties}
 	end
 

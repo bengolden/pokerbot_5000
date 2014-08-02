@@ -1,14 +1,46 @@
 require_relative "poker_bot_hands"
 
 class PokerGame
-	attr_reader :players, :deck, :board
-	def initialize(players=[])
-		@players = players
+	attr_reader :players, :deck, :board, :small_blind, :big_blind, :ante, :pot, :min_bet, :current_bet
+	def initialize(args)
+		@players = args[:players] || []
 		@board = []
 		6.times do
-			@players << PokerPlayer.new
+			@players << PokerPlayer.new({})
 		end
 		@deck = new_deck
+		@small_blind = args[:small_blind] || 25
+		@big_blind = args[:big_blind] || 50
+		@ante = args[:ante] || 0
+		@pot = 0
+		@min_bet = 0
+		@current_bet = 0
+	end
+
+	def begin_hand
+		@players.each{|player| player.in_hand = true}
+		post_blinds_and_ante
+		deal_preflop
+	end
+
+	def post_blinds_and_ante
+		@pot += @players.first.post_blind(small_blind)
+		@pot += @players[1].post_blind(big_blind)
+		@players.each{|player| @pot += player.post_ante(ante)} if ante > 0
+		@current_bet = big_blind
+		@min_bet = big_blind
+	end
+
+	def receive_call(index)
+		@pot += @players[index].call(current_bet)
+	end
+
+	def receive_fold(index)
+		@players[index].fold
+	end
+
+	def players_in_hand
+		players.select{|player| player.in_hand?}.length
 	end
 
 	def deal_preflop
@@ -41,7 +73,6 @@ class PokerGame
 		winner
 	end
 
-
 	private
 
 	def new_deck
@@ -60,15 +91,46 @@ class PokerGame
 end
 
 class PokerPlayer
-	attr_reader :hand
-	def initialize(name = "Anon")
-		@name = name
+	attr_reader :hand, :chips, :last_bet
+	attr_writer :in_hand
+	def initialize(args)
+		@name = args[:name] || "Anon"
+		@chips = args[:chips] || 1000
 		@hand = PokerHand.new([])
+		@last_bet = 0
+		@in_hand = false
 	end
 
 	def receive_cards(cards)
 		@hand.hand << cards
 	end
+
+
+	def post_blind(blind)
+		@chips -= blind
+		blind
+	end
+
+	def post_ante(ante)
+		@chips -= ante
+		ante
+	end
+
+	def call(current_bet)
+		call_size = current_bet - last_bet
+		@chips -= call_size
+		@last_bet	 = call_size
+		call_size
+	end
+
+	def fold
+		@in_hand = false
+	end
+
+	def in_hand?
+		@in_hand
+	end
+
 end
 
 # john = PokerPlayer.new("John")
